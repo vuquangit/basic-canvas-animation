@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex, nofollow">
+  <style type="text/css">
+    body {
+      padding: 0;
+      margin: 0;
+    }
+
+    #canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      background-color: burlywood;
+    }
+  </style>
+
+  <title>Basic animations - An_animated_solar_system - code sample</title>
+  <style></style>
+</head>
+
+<body>
+  <canvas id="canvas" width="800" height="800"></canvas>
+
+  <script>
+    var ctx = document.getElementById("canvas").getContext("2d");
+
+
+    // dx and dy is the direction and speed of the blur
+    function drawBlured(x, y, dx, dy) { // x,y current position, dx,dy delta x,y 
+      var samples = 50;  // the number of samples. The greater the number the 
+      // better the effect but the slower the render
+      // over 100 samples and the dynamic range of colours 
+      // will begin to make it look bad
+      dx /= samples;   // divide the speed by the number of samples
+      dy /= samples;
+      ctx.globalAlpha = 1 / (samples / 1.2);  // set the global alpha need to up the 
+      // val a bit or it gets to dark
+      for (var i = 0; i < samples; i++) {  // draw  the image for each sample
+        ctx.drawImage(image, x + i * dx, y + i * dy); // moving it as we go
+      }
+      ctx.globalAlpha = 1;  // restore alpha
+    } // done;
+
+
+    // code from here down is just for the snippet
+    var posX = 200;
+    var posY = 200;
+    var speedX, speedY
+    var destX, destY;
+
+    // create somthing to blur
+    var image = document.createElement("canvas");
+    image.width = 100;
+    image.height = 100;
+    var ctxS = image.getContext("2d");
+    ctxS.fillStyle = "Black";
+    ctxS.beginPath();
+    ctxS.arc(50, 50, 48, 0, Math.PI * 2);
+    ctxS.fill();
+
+    // ctxS.beginPath();
+    // ctxS.fillStyle = "#FF0";
+    // ctxS.arc(48, 48, 44, 0, Math.PI * 2);
+    // ctxS.fill();
+
+    // ctxS.fillStyle = "Black";
+    // ctxS.beginPath();
+    // ctxS.arc(25, 25, 20, 0, Math.PI * 2);
+    // ctxS.fill();
+    // ctxS.beginPath();
+    // ctxS.arc(75, 25, 20, 0, Math.PI * 2);
+    // ctxS.fill();
+    // ctxS.beginPath();
+    // ctxS.arc(50, 80, 10, 0, Math.PI * 2);
+    // ctxS.fill();
+
+    // ctxS.beginPath();
+    // ctxS.fillStyle = "white";
+    // ctxS.arc(25, 25, 16, 0, Math.PI * 2);
+    // ctxS.fill();
+    // ctxS.beginPath();
+    // ctxS.arc(75, 25, 16, 0, Math.PI * 2);
+    // ctxS.fill();
+
+    // ctxS.beginPath();
+    // ctxS.fillStyle = "black";
+    // ctxS.arc(25, 25, 8, 0, Math.PI * 2);
+    // ctxS.fill();
+    // ctxS.beginPath();
+    // ctxS.arc(75, 25, 8, 0, Math.PI * 2);
+    // ctxS.fill();
+
+
+    var moving = false; // when moving
+    var wait = 10;  // a pause timer
+    function update() {
+      ctx.clearRect(0, 0, 400, 400);  // clear
+      if (moving) {  // draw moving
+        drawBlured(posX, posY, speedX, speedY);
+        posX += speedX;
+        posY += speedY;
+        wait -= 1;
+        if (wait <= 0) { // done moving pause
+          moving = false;
+          wait = Math.random() * 10 + 5;
+        }
+      } else {
+        if (wait > 0) {  // wait 
+          wait -= 1;
+          ctx.drawImage(image, posX, posY);
+
+        } else { // done waiting find a spot to move
+          destX = (Math.random() * 300) + 50;
+          destY = (Math.random() * 300) + 50;
+          speedX = (destX - posX) / 5;
+          speedY = (destY - posY) / 5;
+          ctx.drawImage(image, posX, posY);
+          wait = 5;
+          moving = true;   // start movng
+
+        }
+      }
+      setTimeout(update, 50);  // do this 20 times a second
+    }
+    update();
+
+  </script>
+
+
+</body>
+
+</html>
